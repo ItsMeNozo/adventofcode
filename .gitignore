@@ -1,0 +1,14 @@
+# VS Code workspace settings
+.vscode/
+
+# macOS debug symbol bundles
+*.dSYM/
+
+# macOS metadata
+.DS_Store
+
+# Inputs
+input.txt
+
+# Xcode/macOS app metadata (if not needed)
+Info.plist
