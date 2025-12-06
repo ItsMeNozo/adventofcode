@@ -37,6 +37,31 @@ vector<string> readLinesFromFile(const string &filename)
     return items;
 }
 
+bool isInvalid(long long x) {
+    string s = to_string(x); 
+    int n = s.size(); 
+
+    for (int patternSize = 1; patternSize <= n / 2; ++patternSize) {
+        if (n % patternSize != 0) continue;
+        
+        bool isSame = true; 
+        string pattern = s.substr(0, patternSize); 
+
+        for (int i = patternSize; i <= n - patternSize; i += patternSize) {
+            if (pattern != s.substr(i, patternSize)) {
+                isSame = false; 
+                break; 
+            }
+        } 
+
+        if (isSame) {
+            return true; 
+        }
+    }
+
+    return false; 
+}
+
 long long solve(vector<string> ranges)
 {
     long long ans = 0; 
@@ -49,94 +74,15 @@ long long solve(vector<string> ranges)
         getline(ss, start, '-');
         getline(ss, end, '-');
 
-        cout << start << " " << end << "\n"; 
-
 
         long long startNum = stoll(start);
         long long endNum = stoll(end);
 
-        int halfStartSize = start.size() / 2; 
-        int halfEndSize = (end.size() + 1) / 2; 
-        int startSize = start.size(); 
-        int n = min(halfEndSize, startSize); 
-
-        for (int size = 1; size <= n; ++size) {
-            string cur = start.substr(0, size);
-
-            if (cur.size() > end.size() / 2) {
-                break; 
-            }
-
-            for (long long num = stoll(cur); num < endNum; ++num) {
-                string repeatStr = to_string(num); 
-                bool foundInvalid = true; 
-
-                if (repeatStr.size() > end.size() / 2) {
-                    break; 
-                }
-
-                for (int repeat = start.size() / cur.size(); repeat <= (end.size() + 1) / repeatStr.size(); ++repeat ) {
-                    string invalid; 
-
-                    if (repeat < 2) {
-                        continue; 
-                    }
-
-                    for (int i = 0; i < repeat; ++i) {
-                        invalid += repeatStr;  
-                    }
-
-                    long long invalidNum = stoll(invalid); 
-
-                    if (invalidNum >= startNum && invalidNum <= endNum && sett.find(invalidNum) == sett.end()) {
-                        ans += invalidNum; 
-                        sett.insert(invalidNum); 
-                    } else {
-                        foundInvalid = false; 
-                        break; 
-                    }
-                }
-
-                if (!foundInvalid) {
-                    break; 
-                }
+        for (long long cur = startNum; cur <= endNum; ++cur) {
+            if (isInvalid(cur)) {
+                ans += cur; 
             }
         }
-        
-        for (int size = 1; size <= halfEndSize; ++size) {
-            string cur = end.substr(0, size);
-            
-            for (long long num = stoll(cur); num > 0; --num) {
-                string repeatStr = to_string(num); 
-                bool foundInvalid = true; 
-
-                for (int repeat = end.size() / cur.size(); repeat >= start.size() / cur.size(); --repeat) {
-                    string invalid; 
-
-                    if (repeat < 2) {
-                        break; 
-                    }
-
-                    for (int i = 0; i < repeat; ++i) {
-                        invalid += repeatStr; 
-                    }
-
-                    long long invalidNum = stoll(invalid); 
-
-                    if (invalidNum >= startNum && invalidNum <= endNum && sett.find(invalidNum) == sett.end()) {
-                        ans += invalidNum; 
-                        sett.insert(invalidNum); 
-                    } else {
-                        foundInvalid = false; 
-                        break; 
-                    }
-                }
-                if (!foundInvalid) {
-                    break; 
-                }
-            }
-        }
-
     }
     return ans;
 }
