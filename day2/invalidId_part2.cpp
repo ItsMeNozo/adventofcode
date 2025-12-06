@@ -69,14 +69,15 @@ long long solve(vector<string> ranges)
 
             for (long long num = stoll(cur); num < endNum; ++num) {
                 string repeatStr = to_string(num); 
-                string invalid; 
                 bool foundInvalid = true; 
 
                 if (repeatStr.size() > end.size() / 2) {
                     break; 
                 }
 
-                for (int repeat = start.size() / cur.size(); repeat <= (end.size() - invalid.size() + 1) / repeatStr.size(); ++repeat ) {
+                for (int repeat = start.size() / cur.size(); repeat <= (end.size() + 1) / repeatStr.size(); ++repeat ) {
+                    string invalid; 
+
                     if (repeat < 2) {
                         continue; 
                     }
@@ -107,10 +108,11 @@ long long solve(vector<string> ranges)
             
             for (long long num = stoll(cur); num > 0; --num) {
                 string repeatStr = to_string(num); 
-                string invalid; 
                 bool foundInvalid = true; 
 
                 for (int repeat = end.size() / cur.size(); repeat >= start.size() / cur.size(); --repeat) {
+                    string invalid; 
+
                     if (repeat < 2) {
                         break; 
                     }
