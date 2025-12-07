@@ -34,7 +34,7 @@ vector<string> readLinesFromFile(const string &filename)
 int batteryNum = 12; 
 long long maxJol = 0; 
 
-// curI is used for traversing s while nextBattery is used for setting batteriesSet
+// Approach 1: recursion O(2^n) time since for each position, we either take it or not take it
 void recurseSlowestSolution(string s, int curSize, int curI, long long batteriesSet, int nextBattery) {
     if (s.size() - curI == batteryNum - nextBattery) {
         int rem = s.size() - curI; 
@@ -59,7 +59,7 @@ void recurseSlowestSolution(string s, int curSize, int curI, long long batteries
     recurseSlowestSolution(s, curSize + 1, curI + 1, batteriesSet, nextBattery + 1);  // take the curI
 }
 
-// O(N) time
+// Approach 2: stack O(N) time
 long long findLargestUsingStackSolution(string s) {
     int n = s.size(); 
     int toRemove = n - batteryNum; 
