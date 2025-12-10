@@ -69,12 +69,12 @@ Node* insert(Node* root, long long low, long long high) {
     return root; 
 } 
 
-pair<Node*, int> buildIntervalTree(vector<string> lines) {
+Node* buildIntervalTree(vector<string> lines) {
     Node* root = nullptr; 
 
-    for (int i = 0; i < lines.size(); ++i) {
+    for (long long i = 0; i < lines.size(); ++i) {
         if (lines[i] == "") {
-            return {root, i}; 
+            return root; 
         }
 
         long long low, high; 
@@ -86,41 +86,58 @@ pair<Node*, int> buildIntervalTree(vector<string> lines) {
         root = insert(root, low, high); 
     }
 
-    return {root, 0}; 
+    return root; 
 }
 
-bool isAvailable(Node* root, long long id) {
-    // implement find in interval tree
-    if (root == nullptr) {
-        return false; 
+long long solve(vector<string> lines) {   
+    vector<pair<long long, long long>> ranges; 
+    
+    for (long long i = 0; i < lines.size(); ++i) {
+        if (lines[i] == "") {
+            break; 
+        }
+
+        long long low, high; 
+        char delimiter = '-'; 
+
+        stringstream ss(lines[i]);
+        
+        ss >> low >> delimiter >> high; 
+        ranges.push_back({low, high}); 
+    }    
+
+    if (ranges.size() == 0) {
+        return 0; 
     }
 
-    if (root->interval.low <= id && root->interval.high >= id) {
-        return true; 
-    } 
+    sort(ranges.begin(), ranges.end());  // sort by low
 
-    if (root->left != nullptr && root->left->max > id) {
-        return isAvailable(root->left, id);
-    } else {
-        return isAvailable(root->right, id); 
-    }
-}
+    long long i = 0; 
+    stack<pair<long long, long long>> merged; 
 
-// interval search tree
-int solve(vector<string> lines) {   
-    Node* root; 
-    int searchIndex = 0; 
-    int ans = 0; 
+    merged.push(ranges[0]); 
 
-    tie(root, searchIndex) = buildIntervalTree(lines);
+    for (long long i = 1; i < ranges.size(); ++i) {
+        pair<long long, long long> latest = merged.top(); 
 
-    for (int i = searchIndex + 1; i < lines.size(); ++i) {
-        if (isAvailable(root, stoll(lines[i]))) {
-            ++ans; 
+        if (latest.second >= ranges[i].first) {
+            merged.pop(); 
+            merged.push({latest.first, max(ranges[i].second, latest.second)}); 
+        } else {
+            merged.push(ranges[i]); 
         }
     }
 
-    return ans; 
+    long long idsCount = 0; 
+
+    while (!merged.empty()) {
+        pair<long long, long long> p = merged.top(); 
+        idsCount += (p.second - p.first) + 1; 
+
+        merged.pop(); 
+    }
+
+    return idsCount; 
 }
 
 int main()
